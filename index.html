@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="page_title">الموقع التعريفي | مهندس تقنية معلومات</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-1: #090e17;
+      --bg-2: #111c2e;
+      --bg-3: #05080f;
+      --border: rgba(56, 189, 248, 0.16);
+      --text: #f1f5f9;
+      --text-soft: #94a3b8;
+      --accent: #0ea5e9;
+      --accent-2: #38bdf8;
+      --accent-3: #0284c7;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: Tahoma, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.10), transparent 32%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+      min-height: 100vh;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* الشريط المتحرك العلوي: الاسم والوظيفة */
+    .ticker-top {
+      background: linear-gradient(90deg, var(--accent-3), var(--accent));
+      color: #090e17;
+      font-weight: bold;
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .ticker-top marquee { font-size: 0.95rem; }
+
+    /* شريط التنقل العلوي الرئيسي */
+    .top-nav {
+      position: fixed;
+      top: 41px;
+      left: 0;
+      right: 0;
+      background: rgba(9, 14, 23, 0.92);
+      backdrop-filter: blur(20px);
+      padding: 10px 20px;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 8px;
+      margin: 0 auto;
+      overflow-x: auto;
+    }
+
+    .top-nav button {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-soft);
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .top-nav button:hover,
+    .top-nav button.active {
+      background: var(--accent);
+      color: #090e17;
+      font-weight: bold;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .lang-btn {
+      background: rgba(56, 189, 248, 0.15) !important;
+      border: 1px solid var(--accent-2) !important;
+      color: var(--accent-2) !important;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* الشريط المتحرك السفلي: رقم الهاتف والخدمات */
+    .ticker-bottom {
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid var(--border);
+      color: var(--accent-2);
+      padding: 8px 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1100;
+      font-size: 0.9rem;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .content {
+      padding-top: 120px;
+      padding-bottom: 50px;
+      min-height: 100vh;
+    }
+
+    .screen {
+      display: none;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .glass-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+      margin-bottom: 24px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--accent-2);
+    }
+
+    .header p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: var(--text-soft); font-size: 0.95rem; }
+    .input-wrapper { position: relative; }
+    .input-wrapper input, .input-wrapper select, .input-wrapper textarea {
+      width: 100%;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text);
+      outline: none;
+      border-radius: 16px;
+      padding: 14px 44px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .input-wrapper textarea { min-height: 120px; resize: vertical; }
+    .input-icon { position: absolute; top: 50%; transform: translateY(-50%); color: var(--accent-2); }
+    html[dir="rtl"] .input-icon { right: 16px; }
+    html[dir="ltr"] .input-icon { left: 16px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 26px; border: none; border-radius: 16px; cursor: pointer;
+      font-size: 0.98rem; font-weight: bold; transition: all 0.3s; text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      color: #fff; box-shadow: 0 10px 20px rgba(14, 165, 233, 0.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(14, 165, 233, 0.4); }
+    .btn-outline {
+      background: transparent; border: 1px solid var(--accent-2); color: var(--accent-2);
+    }
+    .btn-outline:hover { background: rgba(56, 189, 248, 0.15); }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
+    }
+
+    .info-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .info-card:hover { border-color: var(--accent-2); transform: translateY(-4px); }
+
+    .project-thumb {
+      width: 100%; height: 220px; object-fit: cover; object-position: top;
+      border-bottom: 1px solid var(--border); cursor: pointer; transition: transform 0.4s ease;
+      background: #05080f;
+    }
+    .info-card:hover .project-thumb { transform: scale(1.03); }
+
+    .card-body { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex: 1; }
+    .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; gap: 10px; }
+    .card-title { font-size: 1.15rem; font-weight: bold; color: var(--text); }
+    .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; white-space: nowrap; }
+    .badge-tech { background: rgba(56, 189, 248, 0.15); color: var(--accent-2); }
+    .badge-done { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+    .card-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .card-meta span {
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.15);
+      padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; color: var(--accent-2);
+    }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: bold; color: var(--accent-2); display: block; margin-bottom: 4px; }
+    .stat-label { color: var(--text-soft); font-size: 0.9rem; }
+
+    .profile-header { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .avatar {
+      width: 85px; height: 85px; border-radius: 24px;
+      background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; color: #090e17; font-weight: bold; flex-shrink: 0;
+    }
+
+    /* نافذة المعرض المنبثقة (Lightbox) */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(5, 8, 15, 0.92); backdrop-filter: blur(12px);
+      z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg-2); border: 1px solid var(--accent-2); border-radius: 24px;
+      max-width: 850px; width: 100%; overflow: hidden; position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 14px; background: rgba(9, 14, 23, 0.85);
+      border: 1px solid var(--accent-2); color: var(--text); width: 38px; height: 38px;
+      border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    html[dir="rtl"] .modal-close { left: 14px; }
+    html[dir="ltr"] .modal-close { right: 14px; }
+
+    .modal-img-wrapper { position: relative; background: #05080f; display: flex; align-items: center; justify-content: center; min-height: 300px; }
+    .modal-img { width: 100%; max-height: 480px; object-fit: contain; display: block; }
+    .gallery-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(9, 14, 23, 0.8); border: 1px solid var(--border); color: var(--accent-2);
+      width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gallery-prev { right: 14px; }
+    .gallery-next { left: 14px; }
+    .modal-details { padding: 20px; }
+    .modal-thumbs { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; }
+    .modal-thumbs img { width: 70px; height: 50px; object-fit: cover; border-radius: 8px; cursor: pointer; opacity: 0.5; border: 2px solid transparent; }
+    .modal-thumbs img.active, .modal-thumbs img:hover { opacity: 1; border-color: var(--accent-2); }
+
+    @media (min-width: 768px) {
+      .sidebar {
+        position: fixed; top: 90px; bottom: 35px; width: 280px;
+        background: rgba(9, 14, 23, 0.6); backdrop-filter: blur(20px); padding: 24px; overflow-y: auto;
+      }
+      html[dir="rtl"] .sidebar { right: 0; border-left: 1px solid var(--border); }
+      html[dir="ltr"] .sidebar { left: 0; border-right: 1px solid var(--border); }
+      html[dir="rtl"] .main-with-sidebar { margin-right: 280px; padding: 20px; }
+      html[dir="ltr"] .main-with-sidebar { margin-left: 280px; padding: 20px; }
+      .nav-link { display: block; padding: 12px 16px; margin-bottom: 8px; border-radius: 12px; color: var(--text-soft); text-decoration: none; cursor: pointer; transition: 0.3s; }
+      .nav-link:hover, .nav-link.active { background: rgba(56, 189, 248, 0.15); color: var(--accent-2); font-weight: bold; }
+    }
+    @media (max-width: 767px) { .sidebar { display: none; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- الشريط المتحرك العلوي: الاسم والوظيفة -->
+  <div class="ticker-top">
+    <marquee behavior="scroll" direction="right" scrollamount="5">
+       أهلاً بكم في الموقع الرسمي للمهندس: <span data-i18n="name">عبدالله فيصل</span> | التخصص: <span data-i18n="role_short">مهندس تقنية معلومات (IT) & مطور برمجيات</span> 
+    </marquee>
+  </div>
+
+  <!-- شريط التنقل العلوي -->
+  <div class="top-nav">
+    <div class="nav-buttons">
+      <button onclick="showScreen('about')" class="active" id="nav-about" data-i18n="nav_about">نبذة عني</button>
+      <button onclick="showScreen('experience')" id="nav-experience" data-i18n="nav_exp">الخبرات</button>
+      <button onclick="showScreen('projects')" id="nav-projects" data-i18n="nav_proj">الأعمال والمشاريع</button>
+      <button onclick="showScreen('contact')" id="nav-contact" data-i18n="nav_contact">تواصل معي</button>
+    </div>
+    <button class="lang-btn" onclick="toggleLanguage()">
+      <span>🌐</span> <span id="lang-label">English</span>
+    </button>
+  </div>
+
+  <div class="app-container">
+    
+    <!-- الشريط الجانبي للكمبيوتر -->
+    <aside class="sidebar">
+      <div class="glass-card" style="padding: 18px; text-align: center;">
+        <div class="avatar" style="margin: 0 auto 12px;" id="avatar-initial">ع</div>
+        <h3 style="font-size: 1.1rem;" data-i18n="name">عبدالله فيصل</h3>
+        <p style="color: var(--accent-2); font-size: 0.85rem; margin-top: 4px;" data-i18n="role_short">مهندس تقنية معلومات (IT)</p>
+      </div>
+      <nav>
+        <a class="nav-link active" id="side-about" onclick="showScreen('about')" data-i18n="side_about">👨‍💻 نبذة عني والمهارات</a>
+        <a class="nav-link" id="side-experience" onclick="showScreen('experience')" data-i18n="side_exp">💼 الخبرات والوظائف</a>
+        <a class="nav-link" id="side-projects" onclick="showScreen('projects')" data-i18n="side_proj">🚀 الأعمال والمشاريع</a>
+        <a class="nav-link" id="side-contact" onclick="showScreen('contact')" data-i18n="side_contact">✉️ تواصل معي</a>
+      </nav>
+    </aside>
+
+    <div class="main-with-sidebar">
+      <div class="content">
+
+        <!-- قسم 1: نبذة عني -->
+        <section class="screen active" id="about">
+          <div class="glass-card">
+            <div class="profile-header">
+              <div class="avatar" id="hero-avatar">ع</div>
+              <div>
+                <span class="badge badge-tech" style="margin-bottom: 8px; display: inline-block;" data-i18n="status_badge">متاح للمشاريع والاستشارات التقنية</span>
+                <h1 style="font-size: clamp(1.4rem, 3vw, 2rem);" data-i18n="name">عبدالله فيصل</h1>
+                <p style="color: var(--accent-2); font-size: 1.05rem;" data-i18n="role_full">مهندس تقنية معلومات | مطور برمجيات وحلول سحابية</p>
+              </div>
+            </div>
+            <p style="color: var(--text-soft); margin-top: 18px;" data-i18n="bio">
+              مهندس تقنية معلومات متخصص في بناء وتطوير تطبيقات الويب المتكاملة، وإدارة البنية التحتية السحابية والحاويات (Docker & Linux)، وتأمين الشبكات. أسعى لتقديم حلول برمجية عالية الكفاءة.
+            </p>
+            <div style="margin-top: 22px; display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn btn-primary" onclick="showScreen('projects')" data-i18n="btn_view_work">🚀 استعراض أعمالي</button>
+              <button class="btn btn-outline" onclick="showScreen('contact')" data-i18n="btn_contact">✉️ تواصل معي</button>
+            </div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-card"><span class="stat-number">+15</span><span class="stat-label" data-i18n="stat_1">مشروع برمجي وتقني</span></div>
+            <div class="stat-card"><span class="stat-number">+4</span><span class="stat-label" data-i18n="stat_2">مجالات تقنية متخصصة</span></div>
+            <div class="stat-card"><span class="stat-number">100%</span><span class="stat-label" data-i18n="stat_3">التزام بمعايير الجودة والأمان</span></div>
+          </div>
+        </section>
+
+        <!-- قسم 2: الخبرات -->
+        <section class="screen" id="experience">
+          <div class="header"><h2 data-i18n="exp_title">الخبرات والوظائف</h2><p data-i18n="exp_sub">المسار المهني والأدوار التقنية</p></div>
+          <div class="cards-grid">
+            <div class="info-card"><div class="card-body">
+              <div>
+                <div class="card-header"><span class="card-title" data-i18n="exp_1_t">مطور تطبيقات ويب متكاملة (Full-Stack)</span><span class="badge badge-done" data-i18n="exp_1_date">الحالي</span></div>
+                <p style="color: var(--accent-2); font-size: 0.9rem; margin-bottom: 8px;" data-i18n="exp_1_org">عمل حر ومشاريع برمجية</p>
+                <p style="color: var(--text-soft);" data-i18n="exp_1_d">تصميم وتطوير منصات الويب التفاعلية وتحسين أداء الواجهات الأمامية والخلفية.</p>
+              </div>
+              <div class="card-meta"><span>HTML/CSS</span><span>JavaScript</span><span>PHP</span><span>Git</span></div>
+            </div></div>
+            <div class="info-card"><div class="card-body">
+              <div>
+                <div class="card-header"><span class="card-title" data-i18n="exp_2_t">مهندس أنظمة وحوسبة سحابية</span><span class="badge badge-tech" data-i18n="exp_2_badge">سحابي</span></div>
+                <p style="color: var(--accent-2); font-size: 0.9rem; margin-bottom: 8px;" data-i18n="exp_2_org">مختبرات البنية التحتية</p>
+                <p style="color: var(--text-soft);" data-i18n="exp_2_d">إعداد البيئات الافتراضية ونشر الحاويات البرمجية باستخدام Docker و Linux.</p>
+              </div>
+              <div class="card-meta"><span>Docker</span><span>Ubuntu</span><span>Python</span><span>GitHub Pages</span></div>
+            </div></div>
+          </div>
+        </section>
+
+        <!-- قسم 3: الأعمال والمشاريع -->
+        <section class="screen" id="projects">
+          <div class="header"><h2 data-i18n="proj_title">الأعمال والمشاريع</h2><p data-i18n="proj_sub">اضغط على أي مشروع لاستعراض الصور والتفاصيل الكاملة</p></div>
+          <div class="cards-grid">
+            <!-- مشروع منصة الخدمات -->
+            <div class="info-card">
+              <img class="project-thumb" src="input_file_0.png" onclick="openProjectModal(0)" alt="Service Platform" id="thumb-0" />
+              <div class="card-body">
+                <div>
+                  <div class="card-header"><span class="card-title" data-i18n="proj_1_t">منصة إدارة الخدمات والصيانة</span><span class="badge badge-done" data-i18n="proj_1_b">ويب</span></div>
+                  <p style="color: var(--text-soft); margin: 8px 0;" data-i18n="proj_1_d">نظام متكامل يربط العملاء بالفنيين وإدارة الطلبات بتصميم متجاوب.</p>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 8px;" onclick="openProjectModal(0)" data-i18n="btn_open_gallery">🖼️ استعراض صور المشروع (2)</button>
+              </div>
+            </div>
+            <!-- مشروع أمن الشبكات -->
+            <div class="info-card">
+              <img class="project-thumb" onclick="openProjectModal(1)" alt="Network Security" id="thumb-1" />
+              <div class="card-body">
+                <div>
+                  <div class="card-header"><span class="card-title" data-i18n="proj_2_t">بيئة شبكة مؤمنة متعددة الخوادم</span><span class="badge badge-tech" data-i18n="proj_2_b">أمن</span></div>
+                  <p style="color: var(--text-soft); margin: 8px 0;" data-i18n="proj_2_d">محاكاة شبكة مؤسسية باستخدام VMware وجدار حماية pfSense ونظام Suricata.</p>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 8px;" onclick="openProjectModal(1)" data-i18n="btn_open_gallery">🖼️ استعراض صور المشروع (2)</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- قسم 4: تواصل معي -->
+        <section class="screen" id="contact">
+          <div class="header"><h2 data-i18n="contact_title">تواصل معي</h2><p data-i18n="contact_sub">يسعدني تواصلك لمناقشة المشاريع البرمجية</p></div>
+          <div class="glass-card" style="max-width: 650px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 24px;">
+              <p style="color: var(--accent-2); font-size: 1.2rem; font-weight: bold;">📞 رقم التواصل المباشر:</p>
+              <a href="tel:782958669" style="font-size: 1.5rem; color: var(--text); text-decoration: none; font-weight: bold; display: inline-block; margin-top: 8px;">782958669</a>
+            </div>
+            <form onsubmit="handleContactSubmit(event)">
+              <div class="form-group"><label data-i18n="lbl_name">الاسم الكامل</label><div class="input-wrapper"><span class="input-icon">👤</span><input type="text" data-i18n-ph="ph_name" placeholder="أدخل اسمك" required></div></div>
+              <div class="form-group"><label data-i18n="lbl_email">البريد الإلكتروني</label><div class="input-wrapper"><span class="input-icon">✉️</span><input type="email" placeholder="name@example.com" required></div></div>
+              <div class="form-group"><label data-i18n="lbl_msg">تفاصيل الرسالة</label><div class="input-wrapper"><textarea data-i18n-ph="ph_msg" placeholder="اكتب رسالتك هنا..." required></textarea></div></div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;"><span data-i18n="btn_send">إرسال الرسالة</span> 🚀</button>
+            </form>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- الشريط المتحرك السفلي متضمن رقم الهاتف 782958669 -->
+  <div class="ticker-bottom">
+    <marquee behavior="scroll" direction="left" scrollamount="4">
+      💡 <span data-i18n="ticker_serv">خدماتنا: تصميم وتطوير مواقع الويب المتجاوبة، حلول الحوسبة السحابية (Docker)، وتأمين الشبكات المؤسسية</span> | 📞 رقم التواصل المباشر: <strong>782958669</strong> | ✉️ يرجى مراسلتنا عبر قسم "تواصل معي" 💡
+    </marquee>
+  </div>
+
+  <!-- نافذة المعرض المنبثقة (Lightbox) -->
+  <div class="modal-overlay" id="project-modal" onclick="closeModalOnBg(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeProjectModal()">✕</button>
+      <div class="modal-img-wrapper">
+        <button class="gallery-nav gallery-prev" onclick="changeSlide(-1)">❯</button>
+        <img src="" alt="Project Preview" class="modal-img" id="modal-main-img">
+        <button class="gallery-nav gallery-next" onclick="changeSlide(1)">❮</button>
+      </div>
+      <div class="modal-details">
+        <h3 id="modal-title" style="color: var(--accent-2); margin-bottom: 6px;"></h3>
+        <p id="modal-desc" style="color: var(--text-soft); font-size: 0.9rem;"></p>
+        <div class="modal-thumbs" id="modal-thumbs"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentLang = 'ar';
+
+    const projectsData = [
+      {
+        title_ar: "منصة إدارة الخدمات والصيانة", title_en: "Service & Maintenance Platform",
+        desc_ar: "نظام متكامل يربط العملاء بالفنيين، ويضم واجهات إنشاء حساب فني وحساب عميل بتصميم متجاوب.",
+        desc_en: "Integrated platform connecting clients and technicians with custom registration UI.",
+        images: [
+          "input_file_0.png",
+          "input_file_1.png"
+        ]
+      },
+      {
+        title_ar: "بيئة شبكة مؤمنة متعددة الخوادم", title_en: "Secure Network Architecture",
+        desc_ar: "محاكاة شبكة مؤسسية باستخدام VMware وجدار حماية pfSense ونظام Suricata.",
+        desc_en: "Enterprise network simulation using VMware, pfSense & Suricata.",
+        images: [
+          'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="#090e17"/><text x="400" y="210" font-family="Tahoma" font-size="24" text-anchor="middle" fill="#38bdf8">pfSense Firewall Topology</text><text x="400" y="250" font-family="Tahoma" font-size="16" text-anchor="middle" fill="#94a3b8">VLANs, NAT & Traffic Rules</text></svg>`),
+          'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="#090e17"/><text x="400" y="210" font-family="Tahoma" font-size="24" text-anchor="middle" fill="#38bdf8">Suricata IDS & Monitoring</text><text x="400" y="250" font-family="Tahoma" font-size="16" text-anchor="middle" fill="#94a3b8">Real-time Threat Detection</text></svg>`)
+        ]
+      }
+    ];
+
+    projectsData.forEach((p, i) => {
+      const thumb = document.getElementById('thumb-' + i);
+      if (thumb) thumb.src = p.images[0];
+    });
+
+    const translations = {
+      ar: {
+        nav_about: "نبذة عني", nav_exp: "الخبرات", nav_proj: "الأعمال", nav_contact: "تواصل معي",
+        side_about: "👨‍💻 نبذة عني والمهارات", side_exp: "💼 الخبرات والوظائف", side_proj: "🚀 الأعمال والمشاريع", side_contact: "✉️ تواصل معي",
+        name: "عبدالله فيصل", role_short: "مهندس تقنية معلومات (IT)", status_badge: "متاح للمشاريع والاستشارات",
+        role_full: "مهندس تقنية معلومات | مطور برمجيات وحلول سحابية",
+        bio: "مهندس تقنية معلومات متخصص في بناء وتطوير تطبيقات الويب المتكاملة، وإدارة البنية التحتية السحابية والحاويات (Docker & Linux)، وتأمين الشبكات.",
+        btn_view_work: "🚀 استعراض أعمالي", btn_contact: "✉️ تواصل معي",
+        stat_1: "مشروع برمجي وتقني", stat_2: "مجالات تقنية متخصصة", stat_3: "التزام بالجودة والأمان",
+        exp_title: "الخبرات والوظائف", exp_sub: "المسار المهني والأدوار التقنية",
+        exp_1_t: "مطور تطبيقات ويب متكاملة (Full-Stack)", exp_1_org: "عمل حر ومشاريع برمجية", exp_1_d: "تصميم وتطوير منصات الويب التفاعلية وتحسين أداء الواجهات.",
+        exp_2_t: "مهندس أنظمة وحوسبة سحابية", exp_2_org: "مختبرات البنية التحتية", exp_2_d: "إعداد البيئات الافتراضية ونشر الحاويات البرمجية باستخدام Docker و Linux.", exp_2_badge: "سحابي",
+        proj_title: "الأعمال والمشاريع", proj_sub: "اضغط على أي مشروع لاستعراض الصور والتفاصيل الكاملة",
+        proj_1_t: "منصة إدارة الخدمات والصيانة", proj_1_b: "ويب",
+        proj_2_t: "بيئة شبكة مؤمنة متعددة الخوادم", proj_2_b: "أمن",
+        btn_open_gallery: "🖼️ استعراض صور المشروع (2)",
+        contact_title: "تواصل معي", contact_sub: "يسعدني تواصلك لمناقشة المشاريع البرمجية",
+        lbl_name: "الاسم الكامل", ph_name: "أدخل اسمك", lbl_email: "البريد الإلكتروني", lbl_msg: "تفاصيل الرسالة", ph_msg: "اكتب رسالتك هنا...", btn_send: "إرسال الرسالة",
+        ticker_serv: "خدماتنا: تصميم وتطوير مواقع الويب المتجاوبة، حلول الحوسبة السحابية، وتأمين الشبكات",
+        ticker_contact: "للتواصل والاستفسار يرجى مراسلتنا عبر قسم تواصل معي أو البريد الإلكتروني"
+      },
+      en: {
+        nav_about: "About Me", nav_exp: "Experience", nav_proj: "Projects", nav_contact: "Contact",
+        side_about: "👨‍💻 About & Skills", side_exp: "💼 Experience & Roles", side_proj: "🚀 Projects & Portfolio", side_contact: "✉️ Contact Me",
+        name: "Abdullah Faisal", role_short: "IT Engineer", status_badge: "Available for Projects & Consulting",
+        role_full: "IT Engineer | Full-Stack Developer & Cloud Solutions",
+        bio: "Information Technology Engineer specializing in full-stack web development, cloud infrastructure and containerization (Docker & Linux), and network security.",
+        btn_view_work: "🚀 Explore My Work", btn_contact: "✉️ Contact Me",
+        stat_1: "Software Projects", stat_2: "Core Tech Domains", stat_3: "Quality & Security Focus",
+        exp_title: "Experience & Roles", exp_sub: "Professional journey and technical roles",
+        exp_1_t: "Full-Stack Web Developer", exp_1_org: "Freelance & Tech Projects", exp_1_d: "Designing and developing interactive web platforms and responsive interfaces.",
+        exp_2_t: "Cloud & Systems Engineer", exp_2_org: "Infrastructure Labs", exp_2_d: "Provisioning virtual environments and deploying Docker containers.", exp_2_badge: "Cloud",
+        proj_title: "Projects & Portfolio", proj_sub: "Click any project to browse its screenshots and full details",
+        proj_1_t: "Service & Maintenance Platform", proj_1_b: "Web",
+        proj_2_t: "Secure Network Architecture", proj_2_b: "Security",
+        btn_open_gallery: "🖼️ View Project Gallery (2)",
+        contact_title: "Contact Me", contact_sub: "Feel free to reach out for software projects or inquiries",
+        lbl_name: "Full Name", ph_name: "Enter your name", lbl_email: "Email Address", lbl_msg: "Message Details", ph_msg: "Write your message here...", btn_send: "Send Message",
+        ticker_serv: "Our Services: Web design & development, cloud computing solutions, and network security",
+        ticker_contact: "For inquiries and contact, please reach out via the Contact section or email"
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      const htmlEl = document.documentElement;
+      htmlEl.lang = currentLang; htmlEl.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+      document.getElementById('lang-label').textContent = currentLang === 'ar' ? 'English' : 'عربي';
+      document.getElementById('avatar-initial').textContent = currentLang === 'ar' ? 'ع' : 'A';
+      document.getElementById('hero-avatar').textContent = currentLang === 'ar' ? 'ع' : 'A';
+
+      const dict = translations[currentLang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if (dict[key]) el.placeholder = dict[key];
+      });
+      if (currentProjectIdx !== null) updateModalContent();
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      document.querySelectorAll('.top-nav button').forEach(b => b.classList.remove('active'));
+      const topBtn = document.getElementById('nav-' + screenId);
+      if (topBtn) topBtn.classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      const sideBtn = document.getElementById('side-' + screenId);
+      if (sideBtn) sideBtn.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    let currentProjectIdx = null, currentSlideIdx = 0;
+    function openProjectModal(idx) {
+      currentProjectIdx = idx; currentSlideIdx = 0;
+      updateModalContent();
+      document.getElementById('project-modal').classList.add('open');
+    }
+    function closeProjectModal() {
+      document.getElementById('project-modal').classList.remove('open');
+      currentProjectIdx = null;
+    }
+    function closeModalOnBg(e) { if (e.target.id === 'project-modal') closeProjectModal(); }
+    function changeSlide(step) {
+      if (currentProjectIdx === null) return;
+      const total = projectsData[currentProjectIdx].images.length;
+      currentSlideIdx = (currentSlideIdx + step + total) % total;
+      updateModalContent();
+    }
+    function selectSlide(i) { currentSlideIdx = i; updateModalContent(); }
+    function updateModalContent() {
+      const proj = projectsData[currentProjectIdx];
+      document.getElementById('modal-main-img').src = proj.images[currentSlideIdx];
+      document.getElementById('modal-title').textContent = currentLang === 'ar' ? proj.title_ar : proj.title_en;
+      document.getElementById('modal-desc').textContent = currentLang === 'ar' ? proj.desc_ar : proj.desc_en;
+      const thumbs = document.getElementById('modal-thumbs');
+      thumbs.innerHTML = '';
+      proj.images.forEach((img, i) => {
+        const thumb = document.createElement('img');
+        thumb.src = img;
+        if (i === currentSlideIdx) thumb.classList.add('active');
+        thumb.onclick = () => selectSlide(i);
+        thumbs.appendChild(thumb);
+      });
+    }
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      alert(currentLang === 'ar' ? 'تم إرسال رسالتك بنجاح! سأتواصل معك قريباً.' : 'Message sent successfully!');
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>
